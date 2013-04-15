@@ -6,8 +6,11 @@ Sub Main()
     Dim FossilHydroResult As VbMsgBoxResult
     Dim iRows As Long   'TotalRows
     Dim s As Variant
-
-    Sheets("Info").Cells.Delete
+    
+    On Error GoTo FAILED_IMPORT_MASTER
+    ImportMaster
+    On Error GoTo 0
+    
     Sheets("Drop In").Select
 
     On Error GoTo FAILED_IMPORT
@@ -34,7 +37,7 @@ Sub Main()
     MsgBox "Open the VMI eStock Data file"
     UserImportFile Sheets("VMI eStock").Range("A1")
     On Error GoTo 0
-
+    
     SaveCombinedBilling
     CreatePivTables
 
@@ -53,7 +56,10 @@ Sub Main()
 
 FAILED_IMPORT:
     MsgBox "User cancelled file import. Macro aborted.", vbOKOnly, "Error"
+    Exit Sub
 
+FAILED_IMPORT_MASTER:
+    MsgBox "Unable to import VMI Master. Macro aborted.", vbOKOnly, "Error"
 End Sub
 
 Sub SaveCombinedBilling()
@@ -363,6 +369,28 @@ Sub SaveBooks()
             Application.DisplayAlerts = True
         End If
     Next
+End Sub
+
+Sub ImportMaster()
+    Dim sPath As String
+    Dim PrevDispAlert As Boolean
+    
+    sPath = "\\br3615gaps\gaps\Duke\VMI Master.xlsx"
+    PrevDispAlert = Application.DisplayAlerts
+    
+    On Error GoTo OPEN_FAILED
+    Workbooks.Open sPath
+    On Error GoTo 0
+    ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Sheets("Master").Range("A1")
+    
+    Application.DisplayAlerts = False
+    ActiveWorkbook.Close
+    Application.DisplayAlerts = PrevDispAlert
+Exit Sub
+
+OPEN_FAILED:
+    'File Not Found
+    Err.Raise 53
 End Sub
 
 Sub CleanUp()
