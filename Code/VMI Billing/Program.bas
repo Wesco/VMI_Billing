@@ -64,8 +64,18 @@ End Sub
 
 Sub CleanUp()
     Dim s As Variant
-
+    Dim PrevDispAlerts As Boolean
+    Dim PrevScrnUpdate As Boolean
+    Dim PrevWkbk As Workbook
+    
+    PrevDispAlerts = Application.DisplayAlerts
+    PrevScrnUpdate = Application.ScreenUpdating
     Application.DisplayAlerts = False
+    Application.ScreenUpdating = False
+    
+    Set PrevWkbk = ActiveWorkbook
+    ThisWorkbook.Activate
+    
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Drop In" And _
            s.Name <> "PivotTable" And _
@@ -76,11 +86,19 @@ Sub CleanUp()
             s.Delete
         End If
     Next
-    Application.DisplayAlerts = True
-
-    Sheets("Drop In").Cells.Delete
-    Sheets("PivotTable").Cells.Delete
-    Sheets("Info").Cells.Delete
-    Sheets("VMI eStock").Cells.Delete
-    ActiveWorkbook.Save
+    
+    For Each s In ThisWorkbook.Sheets
+        If s.Name <> "Macro" Then
+            s.Select
+            Cells.Delete
+            Range("A1").Select
+        End If
+    Next
+    
+    Sheets("Macro").Select
+    Range("C7").Select
+    
+    PrevWkbk.Activate
+    Application.DisplayAlerts = PrevDispAlerts
+    Application.ScreenUpdating = PrevScrnUpdate
 End Sub
