@@ -15,7 +15,7 @@ Sub CreatePivTables()
 
     ActiveWorkbook.PivotCaches.Create( _
             SourceType:=xlDatabase, _
-            SourceData:=Sheets("Drop In").Range(Cells(1, 1), Cells(TotalRows, 15)), _
+            SourceData:=Sheets("Drop In").Range(Cells(1, 1), Cells(TotalRows, 16)), _
             Version:=xlPivotTableVersion14).CreatePivotTable _
             TableDestination:="PivotTable!R1C1", _
             TableName:="PivotTable1", _
@@ -52,27 +52,30 @@ Sub Template(SheetName As String)
 
     StartTime = Timer
     dt = DateAdd("m", -1, Date)
-    aHeaders = Array( _
-               "Plant", _
-               "Vendor Code", _
-               "2nd Tier Supplier", _
-               "Invoice Date", _
-               "VMI Order #", _
-               "Order Line", _
-               "Stock Code", _
-               "Description", _
-               "Qty", _
-               "Price", _
-               "Extended Price", _
-               "Invoice Number", _
-               "Supplier Inv#", _
-               "Supplier Inv Date", _
-               "Packing Slip#")
+    
+    aHeaders = Array("Cust #", _
+                     "Plant", _
+                     "2nd Tier Supplier", _
+                     "Contract #", _
+                     "Invoice Date", _
+                     "VMI Order #", _
+                     "Order Line", _
+                     "Stock Code", _
+                     "Description", _
+                     "Qty", _
+                     "Price", _
+                     "Extended Price", _
+                     "Invoice Number", _
+                     "2nd Tier Supplier Invoice #", _
+                     "2nd Tier Supplier Inv date", _
+                     "Packing List No.")
+
 
     aFields = Array( _
               "Period Covered", _
               "Total", _
               "PO Number", _
+              "Release", _
               "Route Code", _
               "Invoice Number")
 
@@ -80,16 +83,21 @@ Sub Template(SheetName As String)
     ActiveSheet.ListObjects(1).Unlist
     Rows(1).Delete
 
-    Rows("1:7").EntireRow.Insert
+    Rows("1:11").EntireRow.Insert
+
+    'Sheet Title
+    Range("A1").Value = "WESCO - VMI - Monthly Summary Invoice"
+    Range("A1").Font.Size = 14
+    Range("A1").Font.Bold = True
 
     'Add Header Fields
-    Range(Cells(2, 2), Cells(UBound(aFields) + 2, 2)) = WorksheetFunction.Transpose(aFields)
-    For Each Rng In Range("B1:C6")
+    Range(Cells(4, 2), Cells(UBound(aFields) + 4, 2)) = WorksheetFunction.Transpose(aFields)
+    For Each Rng In Range("B4:C9")
         Rng.BorderAround xlContinuous
     Next
 
     'Vendor ID
-    With Range("H1:H2")
+    With Range("H9:H10")
         .Font.Name = "Arial"
         .Font.Size = 14
         .Font.Bold = True
@@ -97,12 +105,12 @@ Sub Template(SheetName As String)
         .Interior.Color = 65535
         .BorderAround xlContinuous, xlMedium
     End With
-    Range("H1").Value = "Vendor ID"
-    Range("H2").Value = "000132199002"
+    Range("H9").Value = "Vendor ID"
+    Range("H10").Value = "000132199002"
 
     'Plant Name
-    With Range("B1")
-        .Formula = "=IFERROR(VLOOKUP(A8,Master!A:D,2,FALSE),"""")"
+    With Range("B3")
+        .Formula = "=IFERROR(VLOOKUP(B12,Master!A:D,2,FALSE),"""")"
         .Font.Name = "Arial"
         .Font.Size = 14
         .Font.Bold = True
@@ -110,33 +118,36 @@ Sub Template(SheetName As String)
         .VerticalAlignment = xlBottom
         .WrapText = False
     End With
-    Range("B1").Value = Range("B1").Value
-    Range("B1:C1").Merge
+    Range("B3").Value = Range("B3").Value
+    Range("B3:C3").Merge
 
     'Period Covered
-    With Range("B2:C2")
+    With Range("B4:C4")
         .Font.Name = "Arial"
         .Font.Size = 9
         .Font.Bold = True
         .HorizontalAlignment = xlLeft
     End With
-    Range("C2").Value = Format(dt, "mmm")
+    Range("C4").Value = Format(dt, "mmm-yy")
 
     'Total
-    Range("C3").Formula = "=SUM(K:K)"
+    Range("C5").Formula = "=SUM(K:K)"
 
     'PO Number
-    Range("C4").Formula = "=VLOOKUP(A8,Master!A:C,3,FALSE)"
+    Range("C6").Formula = "=VLOOKUP(B12,Master!A:C,3,FALSE)"
+
+    'Release
+    Range("C7").Formula = "=IF(VLOOKUP(B12,Master!A:E,5,FALSE)=0,"""",IFERROR(VLOOKUP(B12,Master!A:E,5,FALSE),""""))"
 
     'Route Code
-    Range("C5").Formula = "=IF(VLOOKUP(A8,Master!A:E,5,FALSE)=0,"""",IFERROR(VLOOKUP(A8,Master!A:E,5,FALSE),""""))"
+    Range("C8").Formula = "=IF(VLOOKUP(B12,Master!A:F,6,FALSE)=0,"""",IFERROR(VLOOKUP(B12,Master!A:F,6,FALSE),""""))"
 
     'Invoice Number
-    Range("C6").Formula = "=VLOOKUP(A8,Master!A:D,4,FALSE)"
-    Range("C6").Value = Range("C6").Text & Format(dt, "mmyy")
+    Range("C9").Formula = "=VLOOKUP(B12,Master!A:D,4,FALSE)"
+    Range("C9").Value = Range("C9").Text & Format(dt, "mmyy")
 
-    'Total, PO Number, Route Code, Invoice Number Formatting
-    With Range("B3:C6")
+    'Total-Invoice Formatting
+    With Range("B4:C9")
         .Value = .Value
         .Font.Name = "Arial"
         .Font.Size = 12
@@ -146,11 +157,11 @@ Sub Template(SheetName As String)
     End With
 
     'Add Column Headers
-    Range(Cells(7, 1), Cells(7, UBound(aHeaders) + 1)) = aHeaders
-    Range(Cells(7, 1), Cells(7, UBound(aHeaders) + 1)).HorizontalAlignment = xlCenter
+    Range(Cells(11, 1), Cells(11, UBound(aHeaders) + 1)) = aHeaders
+    Range(Cells(11, 1), Cells(11, UBound(aHeaders) + 1)).HorizontalAlignment = xlCenter
 
     'Add Column Header Borders
-    With Range(Cells(7, 1), Cells(7, UBound(aHeaders) + 1))
+    With Range(Cells(11, 1), Cells(11, UBound(aHeaders) + 1))
         .Borders(xlEdgeTop).LineStyle = xlContinuous
         .Borders(xlEdgeTop).Color = -6908266
         .Borders(xlEdgeTop).TintAndShade = 0
@@ -165,36 +176,41 @@ Sub Template(SheetName As String)
         .Font.Size = 10
         .Font.Bold = True
     End With
-    With Cells(7, UBound(aHeaders) + 1).Borders(xlEdgeRight)
+    With Cells(11, UBound(aHeaders) + 1).Borders(xlEdgeRight)
         .LineStyle = xlContinuous
         .Color = -6908266
         .TintAndShade = 0
         .Weight = xlMedium
     End With
-    Range("B3:C3").Interior.Color = 16777164
+    Range("B5:C5").Interior.Color = 16777164
 
     iCols = ActiveSheet.UsedRange.Columns.Count + 1
     iRows = ActiveSheet.UsedRange.Rows.Count
 
-    'Add eStock Data Vlookup
-    If Range("C5").Text <> "" Then
-        Cells(7, iCols).Value = "VLOOKUP"
+    'Add eStock Data Vlookup if "Route Code" is not blank
+    If Range("C8").Text <> "" Then
+        Cells(11, iCols).Value = "VLOOKUP"
         'Vlookup pulls in cost from the eStock sheet so it
         'can becompared to the cost on the current sheet
         'Column G contains Stock Codes (Item numbers)
-        Cells(8, iCols).Formula = "=IFERROR(VLOOKUP(G8,'VMI eStock'!A:K,11,FALSE),"""")"
-        On Error Resume Next
-        Cells(8, iCols).AutoFill Destination:=Range(Cells(8, iCols), Cells(iRows, iCols))
-        On Error GoTo 0
-        For i = 8 To ActiveSheet.UsedRange.Rows.Count
-            If Cells(i, iCols).Value <> Cells(i, 10).Value Then
+        Range(Cells(11, 8), Cells(iRows, 8)).Cells.Insert
+        Range(Cells(11, 8), Cells(iRows, 8)).Formula = "=""="""""" & I11 & """""""""
+        Range(Cells(11, 8), Cells(iRows, 8)).Value = Range(Cells(11, 8), Cells(iRows, 8)).Value
+        Columns(9).Delete
+        
+        Range(Cells(12, iCols), Cells(iRows, iCols)).Formula = "=IFERROR(VLOOKUP(H12,'VMI eStock'!A:K,11,FALSE),"""")"
+        Range(Cells(12, iCols), Cells(iRows, iCols)).Value = Range(Cells(12, iCols), Cells(iRows, iCols)).Value
+        
+        For i = 12 To ActiveSheet.UsedRange.Rows.Count
+            If Cells(i, iCols).Value <> Cells(i, 11).Value Then
                 Cells(i, iCols).Interior.Color = 5263615
             End If
         Next
     End If
 
-    ActiveSheet.UsedRange.Columns.EntireColumn.AutoFit
-
+    ActiveSheet.UsedRange.Columns.AutoFit
+    Columns(1).Width = 7.86
+    
     FillInfo FunctionName:="Template", _
              FileDate:="", _
              Parameters:="SheetName: " & SheetName, _
