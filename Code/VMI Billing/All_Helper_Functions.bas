@@ -168,7 +168,7 @@ Function ImportGaps() As Boolean
             If ThisWorkbook.Sheets("Gaps").Range("A1").Value <> "" Then
                 Gaps.Cells.Delete
             End If
-            
+
             Workbooks.Open sPath & sName
             ActiveSheet.UsedRange.Copy Destination:=ThisWorkbook.Sheets("Gaps").Range("A1")
             ActiveWorkbook.Close
