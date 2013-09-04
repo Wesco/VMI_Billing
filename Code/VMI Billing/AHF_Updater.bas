@@ -97,10 +97,6 @@ Sub CheckForUpdates(URL As String, Optional RepoName As String = "")
     Ver = Ver & vbCrLf
     Ver = Replace(Ver, vbLf, "")
     Ver = Replace(Ver, vbCr, "")
-
-    Debug.Print Ver
-    Debug.Print Len(Ver)
-
     RegEx.Pattern = "^[0-9]+\.[0-9]+\.[0-9]+$"
     Path = GetWorkbookPath & "Version.txt"
     FileNum = FreeFile
@@ -109,13 +105,11 @@ Sub CheckForUpdates(URL As String, Optional RepoName As String = "")
     Line Input #FileNum, LocalVer
     Close FileNum
 
-
-
     If RegEx.Test(Ver) Then
         If Not Ver = LocalVer Then
             MsgBox Prompt:="An update is available. Please close the macro and get the latest version!", Title:="Update Available"
             If Not RepoName = "" Then
-                Shell "C:\Program Files\Internet Explorer\iexplore.exe http://github.com/Wesco/" & RepoName & "/releases/tag/v" & Ver, vbMaximizedFocus
+                Shell "C:\Program Files\Internet Explorer\iexplore.exe http://github.com/Wesco/" & RepoName & "/releases/", vbMaximizedFocus
             End If
         End If
     End If
