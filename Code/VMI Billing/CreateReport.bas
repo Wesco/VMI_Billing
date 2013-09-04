@@ -147,7 +147,7 @@ Sub Template(SheetName As String)
     Range("C4").Value = Format(dt, "mmm-yy")
 
     'Total
-    Range("C5").Formula = "=SUM(K:K)"
+    Range("C5").Formula = "=SUM(L:L)"
 
     'PO Number
     Range("C6").Formula = "=VLOOKUP(B12,Master!A:C,3,FALSE)"
