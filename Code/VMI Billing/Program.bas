@@ -6,7 +6,9 @@ Sub Main()
     Dim FossilHydroResult As VbMsgBoxResult
     Dim iRows As Long   'TotalRows
     Dim s As Variant
-
+    
+    Application.ScreenUpdating = False
+    
     On Error GoTo FAILED_IMPORT_MASTER
     ImportMaster
     On Error GoTo 0
@@ -52,6 +54,8 @@ Sub Main()
         End If
     Next
 
+    Application.ScreenUpdating = True
+    
     Exit Sub
 
 FAILED_IMPORT:

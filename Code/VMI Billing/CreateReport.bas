@@ -36,8 +36,6 @@ Sub CreatePivTables()
         ActiveSheet.Name = SheetName
         Sheets("PivotTable").Select
     Next
-
-
 End Sub
 
 Sub Template(SheetName As String)
@@ -52,7 +50,7 @@ Sub Template(SheetName As String)
 
     StartTime = Timer
     dt = DateAdd("m", -1, Date)
-    
+
     aHeaders = Array("Cust #", _
                      "Plant", _
                      "2nd Tier Supplier", _
@@ -103,10 +101,28 @@ Sub Template(SheetName As String)
         .Font.Bold = True
         .NumberFormat = "@"
         .Interior.Color = 65535
-        .BorderAround xlContinuous, xlMedium
+        .BorderAround xlContinuous, xlThin
     End With
     Range("H9").Value = "Vendor ID"
     Range("H10").Value = "000132199002"
+
+    'Remit Address
+    With Range("H3")
+        .Value = "Remit Address"
+        .HorizontalAlignment = xlCenter
+        .Font.Size = 14
+        .Font.Bold = True
+    End With
+    Range("H4").Value = "WESCO Distribution"
+    Range("H5").Value = "10101 Claude Freeman Dr"
+    Range("H6").Value = "Suite 220 N."
+    Range("H7").Value = "Charlotte NC, 28262 "
+    With Range("H4:H7")
+        .BorderAround xlContinuous, xlThin
+        .Font.Size = 12
+        .Font.Bold = True
+    End With
+    Range("H3:H7").Font.Name = "Arial"
 
     'Plant Name
     With Range("B3")
@@ -197,10 +213,10 @@ Sub Template(SheetName As String)
         Range(Cells(11, 8), Cells(iRows, 8)).Formula = "=""="""""" & I11 & """""""""
         Range(Cells(11, 8), Cells(iRows, 8)).Value = Range(Cells(11, 8), Cells(iRows, 8)).Value
         Columns(9).Delete
-        
+
         Range(Cells(12, iCols), Cells(iRows, iCols)).Formula = "=IFERROR(VLOOKUP(H12,'VMI eStock'!A:K,11,FALSE),"""")"
         Range(Cells(12, iCols), Cells(iRows, iCols)).Value = Range(Cells(12, iCols), Cells(iRows, iCols)).Value
-        
+
         For i = 12 To ActiveSheet.UsedRange.Rows.Count
             If Cells(i, iCols).Value <> Cells(i, 11).Value Then
                 Cells(i, iCols).Interior.Color = 5263615
@@ -209,8 +225,8 @@ Sub Template(SheetName As String)
     End If
 
     ActiveSheet.UsedRange.Columns.AutoFit
-    Columns(1).Width = 7.86
-    
+    Columns(1).ColumnWidth = 7.86
+
     FillInfo FunctionName:="Template", _
              FileDate:="", _
              Parameters:="SheetName: " & SheetName, _
