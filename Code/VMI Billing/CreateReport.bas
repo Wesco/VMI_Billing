@@ -33,6 +33,15 @@ Sub CreatePivTables()
         SheetName = vCell.Offset(0, -1).Text
 
         vCell.ShowDetail = True
+        
+        'Replace invalid characters
+        SheetName = Replace(SheetName, "\", "_")
+        SheetName = Replace(SheetName, "/", "_")
+        SheetName = Replace(SheetName, "?", "_")
+        SheetName = Replace(SheetName, "*", "_")
+        SheetName = Replace(SheetName, "[", "_")
+        SheetName = Replace(SheetName, "]", "_")
+        
         ActiveSheet.Name = SheetName
         Sheets("PivotTable").Select
     Next
