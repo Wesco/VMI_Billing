@@ -135,7 +135,7 @@ Sub Template(SheetName As String)
 
     'Plant Name
     With Range("B3")
-        .Formula = "=IFERROR(VLOOKUP(B12,Master!A:D,2,FALSE),"""")"
+        .Formula = "=IFERROR(IF(VLOOKUP(B12,Master!A:D,2,FALSE)=0,"""",VLOOKUP(B12,Master!A:D,2,FALSE)),"""")"
         .Font.Name = "Arial"
         .Font.Size = 14
         .Font.Bold = True
