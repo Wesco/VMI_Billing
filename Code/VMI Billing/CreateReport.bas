@@ -33,7 +33,7 @@ Sub CreatePivTables()
         SheetName = vCell.Offset(0, -1).Text
 
         vCell.ShowDetail = True
-        
+
         'Replace invalid characters
         SheetName = Replace(SheetName, "\", "_")
         SheetName = Replace(SheetName, "/", "_")
@@ -41,7 +41,7 @@ Sub CreatePivTables()
         SheetName = Replace(SheetName, "*", "_")
         SheetName = Replace(SheetName, "[", "_")
         SheetName = Replace(SheetName, "]", "_")
-        
+
         ActiveSheet.Name = SheetName
         Sheets("PivotTable").Select
     Next
@@ -159,17 +159,21 @@ Sub Template(SheetName As String)
     Range("C5").Formula = "=SUM(L:L)"
 
     'PO Number
-    Range("C6").Formula = "=VLOOKUP(B12,Master!A:C,3,FALSE)"
+    Range("C6").Formula = "=IFERROR(IF(VLOOKUP(B12,Master!A:C,3,FALSE)=0,"""",VLOOKUP(B12,Master!A:C,3,FALSE)),"""")"
 
     'Release
-    Range("C7").Formula = "=IF(VLOOKUP(B12,Master!A:E,5,FALSE)=0,"""",IFERROR(VLOOKUP(B12,Master!A:E,5,FALSE),""""))"
+    Range("C7").Formula = "=IFERROR(IF(VLOOKUP(B12,Master!A:E,5,FALSE)=0,"""",VLOOKUP(B12,Master!A:E,5,FALSE)),"""")"
 
     'Route Code
-    Range("C8").Formula = "=IF(VLOOKUP(B12,Master!A:F,6,FALSE)=0,"""",IFERROR(VLOOKUP(B12,Master!A:F,6,FALSE),""""))"
+    Range("C8").Formula = "=IFERROR(IF(VLOOKUP(B12,Master!A:F,6,FALSE)=0,"""",VLOOKUP(B12,Master!A:F,6,FALSE)),"""")"
 
     'Invoice Number
-    Range("C9").Formula = "=VLOOKUP(B12,Master!A:D,4,FALSE)"
-    Range("C9").Value = Range("C9").Text & Format(dt, "mmyy")
+    Range("C9").Formula = "=IFERROR(IF(VLOOKUP(B12,Master!A:D,4,FALSE)=0,"""",VLOOKUP(B12,Master!A:D,4,FALSE)),"""")"
+    If Trim(Range("C9").Value) <> "" Then
+        Range("C9").Value = Range("C9").Text & Format(dt, "mmyy")
+    Else
+        Range("C9").Value = Range("C9").Value
+    End If
 
     'Total-Invoice Formatting
     With Range("B4:C9")
