@@ -6,9 +6,9 @@ Sub Main()
     Dim FossilHydroResult As VbMsgBoxResult
     Dim iRows As Long   'TotalRows
     Dim s As Variant
-    
+
     Application.ScreenUpdating = False
-    
+
     On Error GoTo FAILED_IMPORT_MASTER
     ImportMaster
     On Error GoTo 0
@@ -38,6 +38,16 @@ Sub Main()
     'Import VMI eStock Cost Data
     MsgBox "Open the VMI eStock Data file"
     UserImportFile Sheets("VMI eStock").Range("A1")
+
+    'Fix number formatting
+    Sheets("VMI eStock").Select
+    Columns(1).Insert
+    iRows = ActiveSheet.UsedRange.Rows.Count
+    With Range(Cells(1, 1), Cells(iRows, 1))
+        .Formula = "=""=""""""&B1&"""""""""
+        .Value = .Value
+    End With
+    Columns(2).Delete
     On Error GoTo 0
 
     SaveCombinedBilling
@@ -55,7 +65,7 @@ Sub Main()
     Next
 
     Application.ScreenUpdating = True
-    
+
     Exit Sub
 
 FAILED_IMPORT:
@@ -71,15 +81,15 @@ Sub CleanUp()
     Dim PrevDispAlerts As Boolean
     Dim PrevScrnUpdate As Boolean
     Dim PrevWkbk As Workbook
-    
+
     PrevDispAlerts = Application.DisplayAlerts
     PrevScrnUpdate = Application.ScreenUpdating
     Application.DisplayAlerts = False
     Application.ScreenUpdating = False
-    
+
     Set PrevWkbk = ActiveWorkbook
     ThisWorkbook.Activate
-    
+
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Drop In" And _
            s.Name <> "PivotTable" And _
@@ -90,7 +100,7 @@ Sub CleanUp()
             s.Delete
         End If
     Next
-    
+
     For Each s In ThisWorkbook.Sheets
         If s.Name <> "Macro" Then
             s.Select
@@ -98,10 +108,10 @@ Sub CleanUp()
             Range("A1").Select
         End If
     Next
-    
+
     Sheets("Macro").Select
     Range("C7").Select
-    
+
     PrevWkbk.Activate
     Application.DisplayAlerts = PrevDispAlerts
     Application.ScreenUpdating = PrevScrnUpdate
