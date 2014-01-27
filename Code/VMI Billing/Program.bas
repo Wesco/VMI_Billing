@@ -1,5 +1,7 @@
 Attribute VB_Name = "Program"
 Option Explicit
+Public Const VersionNumber As String = "1.1.4"
+Public Const RepositoryName As String = "VMI_Billing"
 
 Sub Main()
     Dim NuclearResult As VbMsgBoxResult
