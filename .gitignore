@@ -2,6 +2,12 @@
 ## Eclipse
 #################
 
+Output/
+
+#################
+## Eclipse
+#################
+
 *.pydevproject
 .project
 .metadata
