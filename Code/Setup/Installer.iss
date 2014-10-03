@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "VMI Billing"
-#define MyAppVersion "1.1.4"
+#define MyAppVersion "1.1.5"
 #define MyAppPublisher "Wesco Distribution, Inc."
 #define MyAppURL "http://www.github.com/wesco"
 #define MyAppExeName "VMI Billing.xlsm"
